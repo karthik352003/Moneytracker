@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 
 class Transaction(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     TRANSACTION_TYPE = (
         ('income', 'Income'),
         ('expense', 'Expense'),
@@ -26,7 +27,4 @@ class Transaction(models.Model):
     def __str__(self):
         return f"{self.category} - {self.amount}"
 
-class New_user (models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    transaction =models.ForeignKey(Transaction,on_delete=models.CASCADE)
     

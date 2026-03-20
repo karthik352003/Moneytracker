@@ -3,15 +3,16 @@
 
 <div class="container mt-5">
 
-    <div class="d-flex justify-content-between mb-3">
-        <h2>Transactions</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>My Transactions</h2>
         <div>
             <a href="{% url 'transaction_create' %}" class="btn btn-success">Add</a>
             <a href="{% url 'summary' %}" class="btn btn-primary">Summary</a>
+            <a href="{% url 'logout' %}" class="btn btn-dark">Logout</a>
         </div>
     </div>
 
-    <table class="table table-bordered table-striped shadow">
+    <table class="table table-bordered table-striped shadow text-center">
         <thead class="table-dark">
             <tr>
                 <th>Date</th>
@@ -25,7 +26,8 @@
         <tbody>
             {% for t in transactions %}
             <tr>
-                <td class="category text-white">{{ t.date }}</td>
+                <td class="main text-white">{{ t.date }}</td>
+
                 <td>
                     {% if t.type == 'income' %}
                         <span class="badge bg-success">Income</span>
@@ -33,12 +35,23 @@
                         <span class="badge bg-danger">Expense</span>
                     {% endif %}
                 </td>
-                <td class="category text-white" >{{ t.category }}</td>
-                <td class="category text-white">₹ {{ t.amount }}</td>
+
+                <td class="main text-white" >{{ t.category }}</td>
+
+                <td>
+                    <strong class="{% if t.type == 'income' %}text-success{% else %}text-danger{% endif %}">
+                        ₹ {{ t.amount }}
+                    </strong>
+                </td>
+
                 <td>
                     <a href="{% url 'transaction_update' t.id %}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="{% url 'transaction_delete' t.id %}" class="btn btn-danger btn-sm">Delete</a>
                 </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td class="main text-white" colspan="5">No transactions yet 🚀</td>
             </tr>
             {% endfor %}
         </tbody>

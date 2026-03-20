@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from .models import Transaction,New_user
+from .models import Transaction
 from .forms import TransactionForm,RegisterForm,LoginForm
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login,logout
@@ -19,7 +19,7 @@ def home(request):
     return render(request, 'home.html')
 @login_required
 def transaction_list(request):
-    transactions = Transaction.objects.all()
+    transactions = Transaction.objects.filter(user=request.user)
     return render(request,'transaction_list.html', {'transactions': transactions})
 
 # Create View
@@ -27,6 +27,8 @@ def transaction_list(request):
 def transaction_create(request):
     form = TransactionForm(request.POST or None)
     if form.is_valid():
+        transaction = form.save(commit=False)
+        transaction.user=request.user
         form.save()
         return redirect('transaction_list')
     return render(request,'transaction_form.html', {'form': form})
@@ -34,7 +36,7 @@ def transaction_create(request):
 # Update View
 @login_required
 def transaction_update(request, pk):
-    transaction = get_object_or_404(Transaction, pk=pk)
+    transaction = get_object_or_404(Transaction, pk=pk,user=request.user)
     form = TransactionForm(request.POST or None, instance=transaction)
     if form.is_valid():
         form.save()
@@ -44,15 +46,17 @@ def transaction_update(request, pk):
 # Delete View
 @login_required
 def transaction_delete(request, pk):
-    transaction = get_object_or_404(Transaction, pk=pk)
+    transaction = get_object_or_404(Transaction, pk=pk,user=request.user)
     transaction.delete()
     return redirect('transaction_list')
 
 # Summary View
 @login_required
 def summary_view(request):
-    income = Transaction.objects.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0
-    expense = Transaction.objects.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
+    user_transactions = Transaction.objects.filter(user=request.user)
+
+    income = user_transactions.filter(type='income').aggregate(Sum('amount'))['amount__sum'] or 0
+    expense = user_transactions.filter(type='expense').aggregate(Sum('amount'))['amount__sum'] or 0
     balance = income - expense
 
     return render(request, 'summary.html', {
@@ -60,7 +64,6 @@ def summary_view(request):
         'expense': expense,
         'balance': balance
     })
-
 #reg view
 
 
