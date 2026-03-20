@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-#jb@6r_^x+=!3ap&36aqofj#a@d(m$3!4kive94n3yaw8_yl0)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://moneytracker-nwtb.onrender.com/']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
