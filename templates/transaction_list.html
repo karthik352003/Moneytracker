@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Transactions</h2>
+        <div>
+            <a href="{% url 'transaction_create' %}" class="btn btn-success">Add</a>
+            <a href="{% url 'summary' %}" class="btn btn-primary">Summary</a>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-striped shadow">
+        <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for t in transactions %}
+            <tr>
+                <td class="category text-white">{{ t.date }}</td>
+                <td>
+                    {% if t.type == 'income' %}
+                        <span class="badge bg-success">Income</span>
+                    {% else %}
+                        <span class="badge bg-danger">Expense</span>
+                    {% endif %}
+                </td>
+                <td class="category text-white" >{{ t.category }}</td>
+                <td class="category text-white">₹ {{ t.amount }}</td>
+                <td>
+                    <a href="{% url 'transaction_update' t.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'transaction_delete' t.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock content %}
